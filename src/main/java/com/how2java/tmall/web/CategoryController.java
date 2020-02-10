@@ -120,7 +120,7 @@ public class CategoryController {
      * @throws Exception
      */
     @PutMapping("/categories/{id}")
-    public Object update(Category bean, MultipartFile image,HttpServletRequest request) throws Exception {
+    public Object update(MultipartFile image,Category bean,HttpServletRequest request) throws Exception {
         String name = request.getParameter("name");
         bean.setName(name);
         categoryService.update(bean);

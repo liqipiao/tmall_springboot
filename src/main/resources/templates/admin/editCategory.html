@@ -5,26 +5,25 @@
 <div th:replace="include/admin/adminNavigator::html" ></div>
 <script>
     $(function () {
-      var data4Vue={
-          uri:'categories',
-          listURL:'admin_category_edit',
-          bean:{id:0,name:'',hp:'0'},
-          file:''
-      };
+        var data4Vue = {
+            uri: 'categories',
+            listURL:'admin_category_list',
+            bean: { id: 0, name: '', hp: '0'},
+            file:''
+        };
       //viewModel
         var vue=new Vue({
-            el:'#workingArea',
-            data:data4Vue,
-            mounted:function () {//mounted　表示这个 Vue 对象加载成功了
+            el: '#workingArea',
+            data: data4Vue,
+            mounted:function(){ //mounted　表示这个 Vue 对象加载成功了
                 this.get();
             },
-            methods:{
-                //根据id查找
-                get:function () {
-                    var id=getUrlParms("id");
-                    var url=this.uri+"/"+id;
-                    axios.get(url).then(function (response) {
-                        vue.bean=response.data;
+            methods: {
+                get:function(){
+                    var id = getUrlParms("id");
+                    var url = this.uri+"/"+id;
+                    axios.get(url).then(function(response) {
+                        vue.bean = response.data;
                     })
                 },
                 /**
@@ -36,10 +35,10 @@
                  5. 修改成功之后， 跳转到 admin_category_list 页面去。
                  */
                 update:function () {
-                    if(!checkEmpty(this.bean.name, "分类名称"))
+                    if(!checkEmpty(this.bean.name, "分类名称")){
                         return;
+                    }
                     var url = this.uri+"/"+this.bean.id;
-
                     //axios.js 上传文件要用 formData 这种方式
                     var formData = new FormData();
                     formData.append("image", this.file);

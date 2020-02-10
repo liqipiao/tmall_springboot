@@ -26,11 +26,11 @@ public class PropertyController {
      * @throws Exception
      */
     @GetMapping("/categories/{cid}/properties")
-    public Page4Navigator<Property> list(@PathVariable(value = "cid") int cid, @RequestParam(value = "start",defaultValue = "0") int start,
-                                         @RequestParam(value = "size",defaultValue = "5") int size) throws Exception {
-        start=start<0?0:start;
-        Page4Navigator<Property> page4Navigator=propertyService.list(cid,start,size,5);
-        return page4Navigator;
+    public Page4Navigator<Property> list(@PathVariable("cid") int cid, @RequestParam(value = "start", defaultValue = "0") int start,
+                                         @RequestParam(value = "size", defaultValue = "5") int size) throws Exception {
+        start = start<0?0:start;
+        Page4Navigator<Property> page =propertyService.list(cid, start, size,5);
+        return page;
     }
 
     /**
@@ -40,13 +40,13 @@ public class PropertyController {
      * @throws Exception
      */
     @PostMapping("/properties")
-    public Object add(@RequestBody Property bean) throws Exception{
+    public Object add(@RequestBody Property bean) throws Exception {
         propertyService.add(bean);
         return bean;
     }
 
     @DeleteMapping("/properties/{id}")
-    public String delete(@PathVariable(value = "id") int id, HttpServletRequest request) throws Exception{
+    public String delete(@PathVariable("id") int id, HttpServletRequest request)  throws Exception {
         propertyService.delete(id);
         return null;
     }
@@ -58,7 +58,7 @@ public class PropertyController {
      * @throws Exception
      */
     @GetMapping("/properties/{id}")
-    public Property get(@PathVariable(value = "id") int id) throws Exception{
+    public Property get(@PathVariable("id") int id) throws Exception {
         Property bean=propertyService.get(id);
         return bean;
     }
@@ -74,7 +74,7 @@ public class PropertyController {
      * @throws Exception
      */
     @PutMapping("/properties")
-    public Object update(@RequestBody Property bean) throws Exception{
+    public Object update(@RequestBody Property bean) throws Exception {
         propertyService.update(bean);
         return bean;
     }
