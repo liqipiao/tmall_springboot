@@ -68,6 +68,29 @@
                 //用于分页
                 jumpByNumber: function(start){
                     jumpByNumber(start,vue);
+                },
+                /**
+                 * 用于删除数据
+                 * 1. 函数名用的 deleteBean, 而不是 delete, 因为 delete 是保留字，妈蛋。。。不能用，这个调试我好久
+                 2. 首先进行是否删除确认 checkDeleteLink(). 这个函数在 adminHeader.html 中定义
+                 3. 组织url, 删除的规范是 /categoreis/123. 要这样写
+                 4. 通过axios 提交 delete 请求
+                 5. 根据 REST 规范，当删除数据后，应该返回一个空字符串，所以会判断 0!=response.data.length
+                 6. 当是空字符串的时候，调用 vue.list(0) 查询第一页。
+                 * @param id 产品id
+                 */
+                deleteBean:function (id) {
+                    if (!checkDeleteLink()){
+                        return;
+                    }
+                    var url=this.uri+"/"+id;
+                    axios.delete(url).then(function (response) {
+                       if (0!=response.data.length){
+                           alert(response.data);
+                       }else {
+                           vue.list(0);
+                       }
+                    });
                 }
             }
         });
@@ -110,7 +133,7 @@
                     <a :href="'admin_category_edit?id=' + bean.id "><span class="glyphicon glyphicon-edit"></span></a>
                 </td>
                 <td>
-                    <a href="#nowhere"  @click="deleteBean(bean.id)"><span class="   glyphicon glyphicon-trash"></span></a>
+                    <a href="#nowhere"  @click="deleteBean(bean.id)"><span class="glyphicon glyphicon-trash"></span></a>
                 </td>
             </tr>
             </tbody>

@@ -5,10 +5,7 @@ import com.how2java.tmall.service.CategoryService;
 import com.how2java.tmall.util.ImageUtil;
 import com.how2java.tmall.util.Page4Navigator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
@@ -76,5 +73,60 @@ public class CategoryController {
         image.transferTo(file);
         BufferedImage bufferedImage= ImageUtil.change2jpg(file);
         ImageIO.write(bufferedImage,"jpg",file);
+    }
+
+    /**
+     * 删除方法
+     * 1. 首先根据id 删除数据库里的数据
+     * 2. 删除对应的文件
+     * 3. 返回 null, 会被RESTController 转换为空字符串。
+     * @param id 删除的id
+     * @param request 获取所属图片
+     * @return null
+     * @throws Exception
+     */
+    @DeleteMapping("/categories/{id}")
+    public String delete(@PathVariable(value = "id") int id,HttpServletRequest request) throws Exception{
+        categoryService.delete(id);
+        File imageFolder=new File(request.getServletContext().getRealPath("img/category"));
+        File file=new File(imageFolder,id+".jpg");
+        file.delete();
+        return null;
+    }
+
+    /**
+     * 查找方法
+     * @param id 查找id
+     * @return 返回实体类对象
+     * @throws Exception
+     */
+    @GetMapping("/categories/{id}")
+    public Category get(@PathVariable(value = "id") int id) throws Exception{
+        Category category=categoryService.get(id);
+        return category;
+    }
+
+    /**
+     * 修改方法
+     * 1. 获取参数名称
+     这里获取参数用的是 request.getParameter("name"). 为什么不用 add里的注入一个 Category对象呢？ 因为。。。PUT 方式注入不了。。。 只能用这种方式取参数了，试了很多次才知道是这么个情况~
+     2. 通过 CategoryService 的update方法更新到数据库
+     3. 如果上传了图片，调用增加的时候共用的 saveOrUpdateImageFile 方法。
+     4. 返回这个分类对象。
+     * @param bean 实体类
+     * @param image 图片方法
+     * @param request 获取图片路径
+     * @return 实体类
+     * @throws Exception
+     */
+    @PutMapping("/categories/{id}")
+    public Object update(Category bean, MultipartFile image,HttpServletRequest request) throws Exception {
+        String name = request.getParameter("name");
+        bean.setName(name);
+        categoryService.update(bean);
+        if(image!=null) {
+            saveOrUpdateImageFile(bean, image, request);
+        }
+        return bean;
     }
 }

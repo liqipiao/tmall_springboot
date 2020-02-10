@@ -48,4 +48,30 @@ public class CategoryService {
     public void add(Category bean){
         categoryDAO.save(bean);
     }
+
+    /**
+     * 用于删除数据
+     * @param id 根据id进行删除
+     */
+    public void delete(int id){
+        categoryDAO.delete(id);
+    }
+
+    /**
+     * 查找方法
+     * @param id 编辑id
+     * @return 返回实体类对象
+     */
+    public Category get(int id){
+        Category category=categoryDAO.findOne(id);
+        return category;
+    }
+
+    /**
+     * 修改方法
+     * @param category 实体类
+     */
+    public void update(Category category){
+        categoryDAO.save(category);
+    }
 }
