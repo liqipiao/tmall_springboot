@@ -6,39 +6,37 @@
 <div th:replace="include/admin/adminNavigator::html" ></div>
 
 <script>
-    $(function () {
-        var data4Vue={
-            uri:'properties',
-            listRUL:'admin_property_list',
-            bean:'',
+    $(function(){
+        var data4Vue = {
+            uri: 'properties',
+            listURL:'admin_property_list',
+            bean: '',
             category:''
         };
-        var vue=new Vue({
-            el:'#workingArea',
-            data:data4Vue,
-            ////mounted　表示这个 Vue 对象加载成功了
-            mounted:function () {
+
+        //ViewModel
+        var vue = new Vue({
+            el: '#workingArea',
+            data: data4Vue,
+            mounted:function(){ //mounted　表示这个 Vue 对象加载成功了
                 this.get();
             },
-            methods:{
-                //根据ID显示数据
-                get:function () {
-                    var id=getUrlParms("id");
-                    var url=this.uri+"/"+id;
-                    axios.get(url).then(function (response) {
-                        vue.bean=response.data;
-                        vue.category=vue.bean.category;
+            methods: {
+                get:function(){
+                    var id = getUrlParms("id");
+                    var url = this.uri+"/"+id;
+                    axios.get(url).then(function(response) {
+                        vue.bean = response.data;
+                        vue.category = vue.bean.category;
                     })
                 },
-                //修改方法
                 update:function () {
-                    if (!checkEmpty(this.bean.name,"属性名称")){
+                    if(!checkEmpty(this.bean.name, "属性名称"))
                         return;
-                    }
-                    var url=this.uri;
-                    axios.put(url,vue.bean).then(function (response) {
+                    var url = this.uri;
+                    axios.put(url,vue.bean).then(function(response){
                         location.href=vue.listURL+"?cid="+vue.category.id;
-                    })
+                    });
                 }
             }
         });
