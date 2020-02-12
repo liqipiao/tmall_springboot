@@ -21,4 +21,23 @@ public class UserService {
         Page pageFormJPA=userDAO.findAll(pageable);
         return new Page4Navigator<>(pageFormJPA,navigatePages);
     }
+
+    //前台注册，判断名字是否被使用
+    public boolean isExist(String name) {
+        User user=getByName(name);
+        return null!=user;
+    }
+
+    private User getByName(String name) {
+        return userDAO.findByName(name);
+    }
+
+    public void add(User user){
+        userDAO.save(user);
+    }
+
+    //前台登录方法
+    public User get(String name,String password){
+        return userDAO.getByNameAndPassword(name,password);
+    }
 }
