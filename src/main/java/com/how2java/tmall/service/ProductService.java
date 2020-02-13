@@ -25,6 +25,12 @@ public class ProductService {
     @Autowired
     ProductImageService productImageService;
 
+    @Autowired
+    OrderItemService orderItemService;
+
+    @Autowired
+    ReviewService reviewService;
+
     public void add(Product product){
         productDAO.save(product);
     }
@@ -84,4 +90,26 @@ public class ProductService {
         }
     }
 
+    //前台产品设置销量
+    public void setSaleAndReviewNumber(Product product){
+        int saleCount=orderItemService.getSaleCount(product);
+        product.setSaleCount(saleCount);
+        int reviewCount=reviewService.getCount(product);
+        product.setReviewCount(reviewCount);
+    }
+
+    //前台评价数量方法
+    public void setSaleAndReviewNumber(List<Product> products){
+        for (Product product : products){
+            setSaleAndReviewNumber(product);
+        }
+    }
+
+    //模糊查询方法
+    public List<Product> search(String keyword,int start,int size){
+        Sort sort=new Sort(Sort.Direction.DESC,"id");
+        Pageable pageable=new PageRequest(start,size,sort);
+        List<Product> products=productDAO.findByNameLike("%"+keyword+"%",pageable);
+        return products;
+    }
 }
