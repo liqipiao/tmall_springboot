@@ -5,6 +5,9 @@ import com.how2java.tmall.pojo.Category;
 import com.how2java.tmall.pojo.Product;
 import com.how2java.tmall.util.Page4Navigator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@CacheConfig(cacheNames="categories")
 public class CategoryService {
 
     @Autowired
@@ -23,6 +27,7 @@ public class CategoryService {
      * 无分页
      * @return 查找所有
      */
+    @Cacheable(key = "'categories-all'")
      public List<Category> list(){
          Sort sort=new Sort(Sort.Direction.DESC, "id");
          return categoryDAO.findAll(sort);
@@ -35,6 +40,7 @@ public class CategoryService {
      * @param navigatePages 总页数
      * @return 返回分页的所有数据
      */
+    @Cacheable(key = "'categories-page-'+#p0+'-'+#p1")
     public Page4Navigator<Category> list(int start, int size, int navigatePages) {
         Sort sort = new Sort(Sort.Direction.DESC, "id");
         Pageable pageable = new PageRequest(start, size,sort);
@@ -46,6 +52,7 @@ public class CategoryService {
      * 增加方法
      * @param  bean
      */
+    @CacheEvict(allEntries = true)
     public void add(Category bean){
         categoryDAO.save(bean);
     }
@@ -54,6 +61,7 @@ public class CategoryService {
      * 用于删除数据
      * @param id 根据id进行删除
      */
+    @CacheEvict(allEntries = true)
     public void delete(int id){
         categoryDAO.delete(id);
     }
@@ -63,6 +71,7 @@ public class CategoryService {
      * @param id 编辑id
      * @return 返回实体类对象
      */
+    @Cacheable(key = "'categories-one-'+#p0")
     public Category get(int id){
         Category category=categoryDAO.findOne(id);
         return category;
@@ -72,6 +81,7 @@ public class CategoryService {
      * 修改方法
      * @param category 实体类
      */
+    @CacheEvict(allEntries = true)
     public void update(Category category){
         categoryDAO.save(category);
     }
