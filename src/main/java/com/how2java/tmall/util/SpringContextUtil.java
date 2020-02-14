@@ -10,7 +10,9 @@ import com.how2java.tmall.service.OrderService;
 public class SpringContextUtil implements ApplicationContextAware {
 
     private SpringContextUtil() {
+
     }
+
     private static ApplicationContext applicationContext;
 
     @Override

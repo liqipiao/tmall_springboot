@@ -24,13 +24,15 @@ public class PortUtil {
     }
     public static void chekPort(int port,String server,boolean shutdown){
         if (!testPort(port)){
-            String message=String.format("在端口 %d 未检查得到 %s 启动%n",port,server);
-            JOptionPane.showMessageDialog(null,message);
-            System.exit(1);
-        }else {
-            String message =String.format("在端口 %d 未检查得到 %s 启动%n,是否继续?",port,server);
-            if(JOptionPane.OK_OPTION !=JOptionPane.showConfirmDialog(null, message)) {
+            if (shutdown){
+                String message=String.format("在端口 %d 未检查得到 %s 启动%n",port,server);
+                JOptionPane.showMessageDialog(null,message);
                 System.exit(1);
+            }else {
+                String message =String.format("在端口 %d 未检查得到 %s 启动%n,是否继续?",port,server);
+                if(JOptionPane.OK_OPTION !=JOptionPane.showConfirmDialog(null, message)) {
+                    System.exit(1);
+                }
             }
         }
     }

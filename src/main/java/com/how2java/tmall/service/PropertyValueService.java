@@ -4,6 +4,7 @@ import com.how2java.tmall.dao.PropertyValueDAO;
 import com.how2java.tmall.pojo.Product;
 import com.how2java.tmall.pojo.Property;
 import com.how2java.tmall.pojo.PropertyValue;
+import com.how2java.tmall.util.SpringContextUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -35,11 +36,12 @@ public class PropertyValueService {
      * @param product
      */
     public void init(Product product){
-        List<Property> properties=propertyService.listByCategory(product.getCategory());
-        for (Property property : properties){
-            PropertyValue propertyValue=getByPropertyAndProduct(product, property);
-            if (null==propertyValue){
-                propertyValue=new PropertyValue();
+        PropertyValueService propertyValueService = SpringContextUtil.getBean(PropertyValueService.class);
+        List<Property> propertys= propertyService.listByCategory(product.getCategory());
+        for (Property property: propertys) {
+            PropertyValue propertyValue = propertyValueService.getByPropertyAndProduct(product, property);
+            if(null==propertyValue){
+                propertyValue = new PropertyValue();
                 propertyValue.setProduct(product);
                 propertyValue.setProperty(property);
                 propertyValueDAO.save(propertyValue);

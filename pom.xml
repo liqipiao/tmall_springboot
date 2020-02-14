@@ -3,7 +3,8 @@
 	<groupId>com.how2java.tmall</groupId>
 	<artifactId>tmall_springboot</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>tmall_springboot</name>
+	<!--<name>tmall_springboot</name>-->
+	<name>springboot</name>
 	<description>tmall_springboot</description>
 	<packaging>war</packaging>
 	<parent>

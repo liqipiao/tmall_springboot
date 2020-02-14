@@ -5,6 +5,7 @@ import com.how2java.tmall.pojo.Order;
 import com.how2java.tmall.pojo.OrderItem;
 import com.how2java.tmall.pojo.User;
 import com.how2java.tmall.util.Page4Navigator;
+import com.how2java.tmall.util.SpringContextUtil;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -97,7 +98,10 @@ public class OrderService {
 
     @Cacheable(key="'orders-uid-'+ #p0.id")
     public List<Order> listByUserAndNotDeleted(User user) {
-        return orderDAO.findByUserAndStatusNotOrderByIdDesc(user,OrderService.delete);
+        OrderService orderService = SpringContextUtil.getBean(OrderService.class);
+        List<Order> orders = orderService.listByUserAndNotDeleted(user);
+        orderItemService.fill(orders);
+        return orders;
     }
 
     //操作购物车方法

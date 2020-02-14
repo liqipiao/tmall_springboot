@@ -3,6 +3,7 @@ package com.how2java.tmall.service;
 import com.how2java.tmall.dao.UserDAO;
 import com.how2java.tmall.pojo.User;
 import com.how2java.tmall.util.Page4Navigator;
+import com.how2java.tmall.util.SpringContextUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -29,7 +30,8 @@ public class UserService {
 
     //前台注册，判断名字是否被使用
     public boolean isExist(String name) {
-        User user=getByName(name);
+        UserService userService = SpringContextUtil.getBean(UserService.class);
+        User user = userService.getByName(name);
         return null!=user;
     }
 

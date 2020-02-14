@@ -5,6 +5,7 @@ import com.how2java.tmall.pojo.Order;
 import com.how2java.tmall.pojo.OrderItem;
 import com.how2java.tmall.pojo.Product;
 import com.how2java.tmall.pojo.User;
+import com.how2java.tmall.util.SpringContextUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -28,7 +29,8 @@ public class OrderItemService {
     }
 
     public void fill(Order order) {
-        List<OrderItem> orderItems = listByOrder(order);
+        OrderItemService orderItemService = SpringContextUtil.getBean(OrderItemService.class);
+        List<OrderItem> orderItems = orderItemService.listByOrder(order);
         float total = 0;
         int totalNumber = 0;
         for (OrderItem oi :orderItems) {
@@ -39,6 +41,7 @@ public class OrderItemService {
         order.setTotal(total);
         order.setOrderItems(orderItems);
         order.setTotalNumber(totalNumber);
+        order.setOrderItems(orderItems);
     }
 
     @CacheEvict(allEntries=true)
@@ -62,16 +65,15 @@ public class OrderItemService {
     }
 
     public int getSaleCount(Product product){
-        List<OrderItem> ois=listByProduct(product);
-        int resule=0;
-        for (OrderItem oi : ois){
-            if (null!=oi.getOrder()){
-                if (null!=oi.getOrder() && null!=oi.getOrder().getPayDate()){
-                    resule+=oi.getNumber();
-                }
-            }
+        OrderItemService orderItemService = SpringContextUtil.getBean(OrderItemService.class);
+        List<OrderItem> ois =orderItemService.listByProduct(product);
+        int result =0;
+        for (OrderItem oi : ois) {
+            if(null!=oi.getOrder())
+                if(null!= oi.getOrder() && null!=oi.getOrder().getPayDate())
+                    result+=oi.getNumber();
         }
-        return resule;
+        return result;
     }
 
     @Cacheable(key="'orderItems-pid-'+ #p0.id")

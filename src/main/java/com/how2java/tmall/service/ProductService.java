@@ -5,6 +5,7 @@ import com.how2java.tmall.es.ProductESDAO;
 import com.how2java.tmall.pojo.Category;
 import com.how2java.tmall.pojo.Product;
 import com.how2java.tmall.util.Page4Navigator;
+import com.how2java.tmall.util.SpringContextUtil;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
@@ -47,33 +48,33 @@ public class ProductService {
     @Autowired
     ProductESDAO productESDAO;
 
-    @CacheEvict(allEntries = true)
+    @CacheEvict(allEntries=true)
     public void add(Product product){
         productDAO.save(product);
         //同步到elasticsearch
         productESDAO.save(product);
     }
 
-    @CacheEvict(allEntries = true)
+    @CacheEvict(allEntries=true)
     public void delete(int id){
         productDAO.delete(id);
         //同步到elasticsearch
         productESDAO.delete(id);
     }
 
-    @Cacheable(key = "'products-one-'+#p0")
+    @Cacheable(key="'products-one-'+ #p0")
     public Product get(int id){
         return productDAO.findOne(id);
     }
 
-    @CacheEvict(allEntries = true)
+    @CacheEvict(allEntries=true)
     public void update(Product product){
         productDAO.save(product);
         //同步到elasticsearch
         productESDAO.save(product);
     }
 
-    @Cacheable(key = "'products-cid-'+#p0+'-page-'+#p1+'-'+#p2")
+    @Cacheable(key="'products-cid-'+#p0+'-page-'+#p1 + '-' + #p2 ")
     public Page4Navigator<Product> list(int cid,int start,int size,int navigatePages){
         Category category=categoryService.get(cid);
         Sort sort=new Sort(Sort.Direction.DESC,"id");
@@ -90,14 +91,15 @@ public class ProductService {
     }
 
     //前台为分类填充产品集合
-    public void fill(Category category){
-        List<Product> products =listByCategory(category);
+    public void fill(Category category) {
+        ProductService productService = SpringContextUtil.getBean(ProductService.class);
+        List<Product> products = productService.listByCategory(category);
         productImageService.setFirstProdutImages(products);
         category.setProducts(products);
     }
 
     //前台查询某个分类下的所有产品
-    @Cacheable(key = "'products-cid-'+#p0.id")
+    @Cacheable(key="'products-cid-'+ #p0.id")
     public List<Product> listByCategory(Category category) {
         return productDAO.findByCategoryOrderById(category);
     }
