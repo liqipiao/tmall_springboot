@@ -1,5 +1,7 @@
 package com.how2java.tmall.web;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -74,12 +76,18 @@ public class ForePageController {
 
     /**
      * 退出登录方法
-     * @param session 保存用户信息的session
      * @return
      */
     @GetMapping("/forelogout")
-    public String logout(HttpSession session) {
+   /* public String logout(HttpSession session) {
         session.removeAttribute("user");
+        return "redirect:home";
+    }*/
+   public String logout() {
+        Subject subject = SecurityUtils.getSubject();
+        if (subject.isAuthenticated()){
+            subject.logout();
+        }
         return "redirect:home";
     }
 

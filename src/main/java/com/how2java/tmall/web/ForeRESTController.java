@@ -6,6 +6,11 @@ import com.how2java.tmall.service.*;
 import com.how2java.tmall.util.Result;
 import com.sun.org.apache.regexp.internal.RE;
 import org.apache.commons.lang.math.RandomUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator;
+import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.subject.Subject;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -69,7 +74,13 @@ public class ForeRESTController {
             String message="用户名已经被使用，请重新输入";
             return Result.fail(message);
         }
-        user.setPassword(password);
+        //使用shiro进行密码加密
+        String salt=new SecureRandomNumberGenerator().nextBytes().toString();
+        int tiems=2;
+        String algorithmName = "md5";
+        String encodedPassword=new SimpleHash(algorithmName,password,salt,tiems).toString();
+        user.setSalt(salt);
+        user.setPassword(encodedPassword);
         userService.add(user);
         return Result.success();
     }
@@ -89,14 +100,27 @@ public class ForeRESTController {
     public Object login(@RequestBody User userParam, HttpSession session){
         String name=userParam.getName();
         name=HtmlUtils.htmlEscape(name);
-        User user=userService.get(name,userParam.getPassword());
+        //使用shiro进行验证
+        Subject subject= SecurityUtils.getSubject();
+        UsernamePasswordToken token=new UsernamePasswordToken(name,userParam.getPassword());
+        try {
+            subject.login(token);
+            User user=userService.getByName(name);
+            session.setAttribute("user",user);
+            return Result.success();
+        }catch (Exception e){
+            e.printStackTrace();
+            String message ="账号或密码错误";
+            return Result.fail(message);
+        }
+        /*User user=userService.get(name,userParam.getPassword());
         if (null==user){
             String message="账号或密码错误";
             return Result.fail(message);
         }else {
             session.setAttribute("user",user);
             return Result.success();
-        }
+        }*/
     }
 
     /**
@@ -133,7 +157,7 @@ public class ForeRESTController {
 
     /**
      * 模态框登录
-     * 获取session中的"user"对象
+     * 为使用shiro加密前，获取session中的"user"对象
      如果不为空，即表示已经登录，返回 Result.success()
      如果为空，即表示未登录，返回 Result.fail("未登录");
      * @param session 保存用户信息的session
@@ -141,11 +165,17 @@ public class ForeRESTController {
      */
     @GetMapping("/forecheckLogin")
     public Object chechLogin(HttpSession session){
-        User user= (User) session.getAttribute("user");
+        /*User user= (User) session.getAttribute("user");
         if (null!=user){
             return Result.success();
         }
-        return Result.fail("请先登录");
+        return Result.fail("请先登录");*/
+        Subject subject = SecurityUtils.getSubject();
+        if(subject.isAuthenticated()) {
+            return Result.success();
+        } else {
+            return Result.fail("请先登录");
+        }
     }
 
     /**
