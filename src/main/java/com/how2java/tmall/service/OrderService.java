@@ -98,10 +98,7 @@ public class OrderService {
 
     @Cacheable(key="'orders-uid-'+ #p0.id")
     public List<Order> listByUserAndNotDeleted(User user) {
-        OrderService orderService = SpringContextUtil.getBean(OrderService.class);
-        List<Order> orders = orderService.listByUserAndNotDeleted(user);
-        orderItemService.fill(orders);
-        return orders;
+        return orderDAO.findByUserAndStatusNotOrderByIdDesc(user, OrderService.delete);
     }
 
     //操作购物车方法

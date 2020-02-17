@@ -16,7 +16,8 @@ import java.util.List;
 
 @RestController
 public class CategoryController {
-    @Autowired CategoryService categoryService;
+    @Autowired
+    CategoryService categoryService;
 
     /**
      * 无分页方法

@@ -66,6 +66,7 @@
                 <th>金额</th>
                 <th width="100px">商品数量</th>
                 <th width="100px">买家名称</th>
+                <th>买家留言</th>
                 <th>创建时间</th>
                 <th>支付时间</th>
                 <th>发货时间</th>
@@ -77,30 +78,15 @@
             <!-- 在业务上需要一个订单数据产生两行 tr, 此时就不能在 tr上进行 v-for, 而需要用 template 标签 -->
             <template v-for="bean in beans ">
                 <tr >
-                    <td>
-                        {{bean.statusDesc}}
-                    </td>
-                    <td>
-                        {{bean.total}}
-                    </td>
-                    <td>
-                        {{bean.totalNumber}}
-                    </td>
-                    <td>
-                        {{bean.user.name}}
-                    </td>
-                    <td>
-                        {{bean.createDate | formatDateFilter}}
-                    </td>
-                    <td>
-                        {{bean.payDate | formatDateFilter}}
-                    </td>
-                    <td>
-                        {{bean.deliveryDate | formatDateFilter}}
-                    </td>
-                    <td>
-                        {{bean.confirmDate | formatDateFilter}}
-                    </td>
+                    <td>{{bean.statusDesc}}</td>
+                    <td>{{bean.total}}</td>
+                    <td>{{bean.totalNumber}}</td>
+                    <td>{{bean.user.name}}</td>
+                    <td>{{bean.userMessage}}</td>
+                    <td>{{bean.createDate | formatDateFilter}}</td>
+                    <td>{{bean.payDate | formatDateFilter}}</td>
+                    <td>{{bean.deliveryDate | formatDateFilter}}</td>
+                    <td>{{bean.confirmDate | formatDateFilter}}</td>
                     <td>
                         <button @click="showOrderItems(bean)" class="orderPageCheckOrderItems btn btn-primary btn-xs">查看详情</button>
 

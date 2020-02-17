@@ -21,6 +21,7 @@ public class JPARealm extends AuthorizingRealm{
     @Autowired
     UserService userService;
 
+
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         SimpleAuthenticationInfo simpleAuthenticationInfo=new SimpleAuthenticationInfo();

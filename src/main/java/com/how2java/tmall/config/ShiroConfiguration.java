@@ -38,12 +38,14 @@ public class ShiroConfiguration {
         return securityManager;
     }
 
+    //前台取盐方法
     @Bean
     public JPARealm getJPARealm(){
         JPARealm myShiroRealm=new JPARealm();
         myShiroRealm.setCredentialsMatcher(hashedCredentialsMatcher());
         return myShiroRealm;
     }
+
 
     @Bean
     public HashedCredentialsMatcher hashedCredentialsMatcher() {

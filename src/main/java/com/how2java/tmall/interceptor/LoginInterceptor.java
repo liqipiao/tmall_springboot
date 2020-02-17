@@ -52,7 +52,7 @@ public class LoginInterceptor implements HandlerInterceptor {
                 "foreorderConfirmed",
                 "foredeleteOrder",
                 "forereview",
-                "foredoreview"
+                "foredoreview",
         };
 
         String uri = httpServletRequest.getRequestURI();

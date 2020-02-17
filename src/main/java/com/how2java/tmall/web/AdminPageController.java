@@ -21,6 +21,11 @@ public class AdminPageController {
 
     }
 
+    @GetMapping(value="/admin_register")
+    public String register(){
+        return "admin/register";
+    }
+
     @GetMapping(value="/admin_order_list")
     public String listOrder(){
         return "admin/listOrder";
@@ -65,7 +70,10 @@ public class AdminPageController {
     @GetMapping(value="/admin_user_list")
     public String listUser(){
         return "admin/listUser";
-
+    }
+    @GetMapping(value="/admin_login")
+    public String adminLogin(){
+        return "admin/login";
     }
 
 }

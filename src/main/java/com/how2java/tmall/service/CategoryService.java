@@ -1,9 +1,7 @@
 package com.how2java.tmall.service;
 
-import com.how2java.tmall.dao.CategoryDAO;
-import com.how2java.tmall.pojo.Category;
-import com.how2java.tmall.pojo.Product;
-import com.how2java.tmall.util.Page4Navigator;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -14,32 +12,40 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.how2java.tmall.dao.CategoryDAO;
+import com.how2java.tmall.pojo.Category;
+import com.how2java.tmall.pojo.Product;
+import com.how2java.tmall.util.Page4Navigator;
 
 @Service
 @CacheConfig(cacheNames="categories")
 public class CategoryService {
+    @Autowired CategoryDAO categoryDAO;
 
-    @Autowired
-    CategoryDAO categoryDAO;
+    @CacheEvict(allEntries=true)
+//  @CachePut(key="'category-one-'+ #p0")
+    public void add(Category bean) {
+        categoryDAO.save(bean);
+    }
 
-    /**
-     * 无分页
-     * @return 查找所有
-     */
-    @Cacheable(key="'categories-all'")
-     public List<Category> list(){
-         Sort sort=new Sort(Sort.Direction.DESC, "id");
-         return categoryDAO.findAll(sort);
-     }
+    @CacheEvict(allEntries=true)
+//  @CacheEvict(key="'category-one-'+ #p0")
+    public void delete(int id) {
+        categoryDAO.delete(id);
+    }
 
-    /**
-     * 实现分页
-     * @param start 起始页
-     * @param size 数量
-     * @param navigatePages 总页数
-     * @return 返回分页的所有数据
-     */
+    @Cacheable(key="'categories-one-'+ #p0")
+    public Category get(int id) {
+        Category c= categoryDAO.findOne(id);
+        return c;
+    }
+
+    @CacheEvict(allEntries=true)
+//  @CachePut(key="'category-one-'+ #p0")
+    public void update(Category bean) {
+        categoryDAO.save(bean);
+    }
+
     @Cacheable(key="'categories-page-'+#p0+ '-' + #p1")
     public Page4Navigator<Category> list(int start, int size, int navigatePages) {
         Sort sort = new Sort(Sort.Direction.DESC, "id");
@@ -48,62 +54,34 @@ public class CategoryService {
         return new Page4Navigator<>(pageFromJPA,navigatePages);
     }
 
-    /**
-     * 增加方法
-     * @param  bean
-     */
-    @CacheEvict(allEntries=true)
-    public void add(Category bean){
-        categoryDAO.save(bean);
+    @Cacheable(key="'categories-all'")
+    public List<Category> list() {
+        Sort sort = new Sort(Sort.Direction.DESC, "id");
+        return categoryDAO.findAll(sort);
     }
 
-    /**
-     * 用于删除数据
-     * @param id 根据id进行删除
-     */
-    @CacheEvict(allEntries=true)
-    public void delete(int id){
-        categoryDAO.delete(id);
-    }
+    //这个方法的用处是删除Product对象上的 分类。 为什么要删除呢？ 因为在对分类做序列还转换为 json 的时候，会遍历里面的 products, 然后遍历出来的产品上，又会有分类，接着就开始子子孙孙无穷溃矣地遍历了，就搞死个人了
+    //而在这里去掉，就没事了。 只要在前端业务上，没有通过产品获取分类的业务，去掉也没有关系
 
-    /**
-     * 查找方法
-     * @param id 编辑id
-     * @return 返回实体类对象
-     */
-    @Cacheable(key="'categories-one-'+ #p0")
-    public Category get(int id){
-        Category category=categoryDAO.findOne(id);
-        return category;
-    }
-
-    /**
-     * 修改方法
-     * @param category 实体类
-     */
-    @CacheEvict(allEntries=true)
-    public void update(Category category){
-        categoryDAO.save(category);
-    }
-
-    public void removeCategoryFromProduct(List<Category> categories){
-        for (Category category : categories){
+    public void removeCategoryFromProduct(List<Category> cs) {
+        for (Category category : cs) {
             removeCategoryFromProduct(category);
         }
     }
 
     public void removeCategoryFromProduct(Category category) {
-        List<Product> products=category.getProducts();
-        if (null!=products){
-            for (Product product : products){
+        List<Product> products =category.getProducts();
+        if(null!=products) {
+            for (Product product : products) {
                 product.setCategory(null);
             }
         }
-        List<List<Product>> productsByRow = category.getProductsByRow();
-        if (null!=productsByRow){
-            for (List<Product> ps : productsByRow){
-                for (Product product : ps){
-                    product.setCategory(null);
+
+        List<List<Product>> productsByRow =category.getProductsByRow();
+        if(null!=productsByRow) {
+            for (List<Product> ps : productsByRow) {
+                for (Product p: ps) {
+                    p.setCategory(null);
                 }
             }
         }

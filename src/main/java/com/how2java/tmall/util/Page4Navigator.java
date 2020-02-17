@@ -11,29 +11,29 @@ public class Page4Navigator<T> {
     //jpa 传递出来的分页对象， Page4Navigator 类就是对它进行封装以达到扩展的效果
     Page<T> pageFormJap;
     //分页的时候 ,如果总页数比较多，那么显示出来的分页超链一个有几个。 比如如果分页出来的超链是这样的： [8,9,10,11,12], 那么 navigatePages 就是5
-    int navigatePages;
+     int navigatePages;
     //总页数
-    int totalPages;
+     int totalPages;
     //第几页
-    int number;
+     int number;
     //总共多少条数据
-    long totalElements;
+     long totalElements;
     //一页最多几条数据
-    int size;
+     int size;
     //当前页有多少数据
-    int numberOfElements;
+     int numberOfElements;
     //数据集合
-    List<T> content;
+     List<T> content;
     //是否有数据
-    boolean isHasContenr;
+     boolean HasContenr;
     //是否是首页
-    boolean first;
+     boolean isfirst;
     //是否是最后一页
-    boolean last;
+     boolean islast;
     //是否有下一页
-    boolean isHasNext;
+     boolean HasNext;
     //是否有上一页
-    boolean isHasPrevious;
+     boolean HasPrevious;
     //分页的时候 ,如果总页数比较多，那么显示出来的分页超链一个有几个。 比如如果分页出来的超链是这样的： [8,9,10,11,12]，那么 navigatepageNums 就是这个数组：[8,9,10,11,12]，这样便于前端展示
     int[] navigatepageNums;
 
@@ -50,11 +50,11 @@ public class Page4Navigator<T> {
         size=pageFormJap.getSize();
         numberOfElements=pageFormJap.getNumberOfElements();
         content=pageFormJap.getContent();
-        isHasContenr=pageFormJap.hasContent();
-        first=pageFormJap.isFirst();
-        last=pageFormJap.isLast();
-        isHasNext=pageFormJap.hasNext();
-        isHasPrevious=pageFormJap.hasPrevious();
+        HasContenr=pageFormJap.hasContent();
+        isfirst=pageFormJap.isFirst();
+        islast=pageFormJap.isLast();
+        HasNext=pageFormJap.hasNext();
+        HasPrevious=pageFormJap.hasPrevious();
         calcNavigatepageNums();
     }
 
@@ -95,13 +95,13 @@ public class Page4Navigator<T> {
         this.navigatepageNums=navigatepageNums;
     }
 
-    public Page<T> getPageFormJap() {
+  /*  public Page<T> getPageFormJap() {
         return pageFormJap;
     }
 
     public void setPageFormJap(Page<T> pageFormJap) {
         this.pageFormJap = pageFormJap;
-    }
+    }*/
 
     public int getNavigatePages() {
         return navigatePages;
@@ -160,43 +160,43 @@ public class Page4Navigator<T> {
     }
 
     public boolean isHasContenr() {
-        return isHasContenr;
+        return HasContenr;
     }
 
     public void setHasContenr(boolean hasContenr) {
-        isHasContenr = hasContenr;
+        HasContenr = hasContenr;
     }
 
-    public boolean isFirst() {
-        return first;
+    public boolean isIsfirst() {
+        return isfirst;
     }
 
-    public void setFirst(boolean first) {
-        this.first = first;
+    public void setIsfirst(boolean isfirst) {
+        this.isfirst = isfirst;
     }
 
-    public boolean isLast() {
-        return last;
+    public boolean isIslast() {
+        return islast;
     }
 
-    public void setLast(boolean last) {
-        this.last = last;
+    public void setIslast(boolean islast) {
+        this.islast = islast;
     }
 
     public boolean isHasNext() {
-        return isHasNext;
+        return HasNext;
     }
 
     public void setHasNext(boolean hasNext) {
-        isHasNext = hasNext;
+        HasNext = hasNext;
     }
 
     public boolean isHasPrevious() {
-        return isHasPrevious;
+        return HasPrevious;
     }
 
     public void setHasPrevious(boolean hasPrevious) {
-        isHasPrevious = hasPrevious;
+        HasPrevious = hasPrevious;
     }
 
     public int[] getNavigatepageNums() {
